@@ -84,10 +84,59 @@ class Cell
     end
 end
 
-#il programma chiede se il giocatore indovina o fa il codice, ha nove turni per mettere la combinazione delle 4 celle.
-#ogni volta che viene indovinato un colore e un colore + posizione il computer lo dice.
 class Match
     include Interface
+    def computer_play
+        welcome()
+        codex = Code.new
+        puts ""
+        winner = false
+        turns = 0
+        for i in 0..3 do
+            color = ""
+            puts ""
+            puts "The computer will try and guess your code!"
+            puts "What's the color in the cell number #{i + 1}?"
+            puts "Choose between blue, red, green, yellow, purple, white."
+            puts ""
+            while ((color != "blue") && (color != "green") && (color != "yellow") && (color != "white") && (color != "purple") && (color != "red")) 
+                color = gets.chomp
+                guessCell = create_guess(color)
+                codex.arrayCode[i] = guessCell
+            end
+        end
+        codex.print_code
+        while ((winner == false) && (turns != 9))
+            guess = Code.new
+            correctColor = 0
+            correctGuess = 0
+            for i in 0..3 do
+                if [codex.arrayCode[0].color, codex.arrayCode[1].color, codex.arrayCode[2].color, codex.arrayCode[3].color].any?(guess.arrayCode[i].color)
+                    correctColor += 1
+                end
+                for j in 0..3 do
+                    if guess.arrayCode[i].color == codex.arrayCode[j].color
+                        if i == j
+                            correctGuess += 1
+                        end
+                    end
+                end
+            end
+            puts ""
+            puts "#{correctGuess} are in the correct color and position"
+            puts "#{(correctColor - correctGuess)} color are correct but not in the correct position"
+            puts ""
+            if correctGuess == 4
+                winner = true
+                puts "The guess was correct! I WON!"
+            end
+            if turns == 8
+                puts "I didn't find the combination in time, you WON!"
+            end
+            turns += 1
+        end
+    end 
+    
     def play
         welcome()
         codex = Code.new
@@ -141,4 +190,4 @@ class Match
 end
 
 game = Match.new
-game.play
+game.computer_play
